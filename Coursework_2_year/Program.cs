@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using Coursework_2_year.Forms;
+using Coursework_2_year.Data;
 
 namespace Coursework_2_year
 {
@@ -9,8 +10,10 @@ namespace Coursework_2_year
         [STAThread]
         static void Main()
         {
+            DatabaseHelper.CreateTables();
+
             ApplicationConfiguration.Initialize();
-            Application.Run(new MainForm());
+            Application.Run(new LoginForm());
         }
     }
 }
