@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using Coursework_2_year.Data;
+using Coursework_2_year.Models;
 
 namespace Coursework_2_year.Forms
 {
@@ -47,6 +49,7 @@ namespace Coursework_2_year.Forms
             btnLogin = new Button();
             btnLogin.Text = "Login";
             btnLogin.SetBounds(60, 180, 140, 35);
+            btnLogin.Click += BtnLogin_Click;
 
             btnRegister = new Button();
             btnRegister.Text = "Register";
@@ -60,6 +63,33 @@ namespace Coursework_2_year.Forms
 
             Controls.Add(btnLogin);
             Controls.Add(btnRegister);
+        }
+
+        private void BtnLogin_Click(object? sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtEmail.Text) ||
+                 string.IsNullOrWhiteSpace(txtPassword.Text))
+            {
+                MessageBox.Show("Please enter both email and password", "Warning",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            User user = UserRepository.Login(txtEmail.Text, txtPassword.Text);
+
+            if (user is null)  // ← Кращий спосіб перевірки на null
+            {
+                MessageBox.Show("Invalid login or password", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            Hide();
+
+            MainForm form = new MainForm();
+            form.ShowDialog();
+
+            Close();
         }
     }
 }
