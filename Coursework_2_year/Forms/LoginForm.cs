@@ -18,7 +18,7 @@ namespace Coursework_2_year.Forms
 
         public LoginForm()
         {
-            Text = "Login";
+            Text = "Авторизація";
             Width = 400;
             Height = 320;
             StartPosition = FormStartPosition.CenterScreen;
@@ -35,7 +35,7 @@ namespace Coursework_2_year.Forms
             txtEmail.Width = 200;
 
             lblPassword = new Label();
-            lblPassword.Text = "Password:";
+            lblPassword.Text = "Пароль:";
             lblPassword.Left = 30;
             lblPassword.Top = 85;
             lblPassword.Width = 80;
@@ -47,13 +47,14 @@ namespace Coursework_2_year.Forms
             txtPassword.PasswordChar = '*';
 
             btnLogin = new Button();
-            btnLogin.Text = "Login";
+            btnLogin.Text = "Увійти";
             btnLogin.SetBounds(60, 180, 140, 35);
             btnLogin.Click += BtnLogin_Click;
 
             btnRegister = new Button();
-            btnRegister.Text = "Register";
+            btnRegister.Text = "Зареєструватися";
             btnRegister.SetBounds(220, 180, 140, 35);
+            btnRegister.Click += BtnRegister_Click;
 
             Controls.Add(lblEmail);
             Controls.Add(txtEmail);
@@ -70,17 +71,15 @@ namespace Coursework_2_year.Forms
             if (string.IsNullOrWhiteSpace(txtEmail.Text) ||
                  string.IsNullOrWhiteSpace(txtPassword.Text))
             {
-                MessageBox.Show("Please enter both email and password", "Warning",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Будь ласка, введіть email та пароль", "Попередження",MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             User user = UserRepository.Login(txtEmail.Text, txtPassword.Text);
 
-            if (user is null)  // ← Кращий спосіб перевірки на null
+            if (user is null)  
             {
-                MessageBox.Show("Invalid login or password", "Error",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Невірний email або пароль", "Помилка",MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -90,6 +89,12 @@ namespace Coursework_2_year.Forms
             form.ShowDialog();
 
             Close();
+        }
+
+        private void BtnRegister_Click(object? sender, EventArgs e)
+        {
+            RegisterForm registerForm = new RegisterForm();
+            registerForm.ShowDialog();
         }
     }
 }
