@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using Coursework_2_year.Data;
 using Coursework_2_year.Models;
+using System.Text.RegularExpressions;
 
 namespace Coursework_2_year.Forms
 {
@@ -84,9 +85,9 @@ namespace Coursework_2_year.Forms
             btnRegister = new()
             {
                 Text = "Зареєструватися",
-                Left = 130,
+                Left = 150,
                 Top = 200,
-                Width = 120
+                Width = 140
             };
 
             btnRegister.Click += BtnRegister_Click;
