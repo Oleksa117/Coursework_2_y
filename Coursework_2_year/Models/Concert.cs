@@ -6,6 +6,8 @@ namespace Coursework_2_year.Models
 {
     public class Concert
     {
+        public List<Ticket> Seats { get; set; } = new();
+
         public int Id { get; set; }
 
         public string Title { get; set; } = "";
