@@ -4,7 +4,13 @@ using System.Text;
 
 namespace Coursework_2_year.Models
 {
-    internal class Standing
+    public class Standing : Ticket
     {
+        public override decimal GetPrice() => 300m;
+
+        public override string GetTypeName() => "Standing";
+
+        public override string GetInfo() =>
+            $"Стояче | {SeatLabel} | {(IsAvailable ? "Доступний" : "Продано")} | 300 грн";
     }
 }

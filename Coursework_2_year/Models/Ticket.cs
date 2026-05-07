@@ -10,8 +10,14 @@ namespace Coursework_2_year.Models
 
         public int ConcertId { get; set; }
 
-        public string Type { get; set; } = "";
+        public string SeatLabel { get; set; } = string.Empty;
 
-        public double Price { get; set; }
+        public bool IsAvailable { get; set; } = true;
+
+        public abstract decimal GetPrice();
+
+        public abstract string GetTypeName();
+
+        public abstract string GetInfo();
     }
 }
