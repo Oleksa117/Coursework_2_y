@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Coursework_2_year.Models.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Coursework_2_year.Models
 {
-    public abstract class Ticket
+    public abstract class Ticket : IBookable, IPrintable
     {
         public int Id { get; set; }
         public int ConcertId { get; set; }

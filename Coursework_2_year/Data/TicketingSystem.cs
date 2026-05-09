@@ -3,7 +3,7 @@ using Coursework_2_year.Models;
 
 namespace Coursework_2_year.Data
 {
-    public static class UserRepository
+    public static class TicketingSystem
     {
         private const string ConnectionString = "Data Source=tickets.db";
 

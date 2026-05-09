@@ -123,7 +123,7 @@ namespace Coursework_2_year.Forms
                 Role = "Customer"
             };
 
-            UserRepository.Register(user);
+            TicketingSystem.Register(user);
 
             MessageBox.Show("Реєстрацію успішно завершено!","Інформація",MessageBoxButtons.OK,MessageBoxIcon.Information);
 

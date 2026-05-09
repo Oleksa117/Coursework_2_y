@@ -75,7 +75,7 @@ namespace Coursework_2_year.Forms
                 return;
             }
 
-            User user = UserRepository.Login(txtEmail.Text, txtPassword.Text);
+            User user = TicketingSystem.Login(txtEmail.Text, txtPassword.Text);
 
             if (user is null)  
             {
