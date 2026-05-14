@@ -1,100 +1,208 @@
-﻿using System;
-using System.Windows.Forms;
-using Coursework_2_year.Data;
+﻿using Coursework_2_year.Data;
+using System.Text.RegularExpressions;
 using Coursework_2_year.Models;
 
-namespace Coursework_2_year.Forms
+namespace Coursework_2_year.Forms;
+
+public class LoginForm : Form
 {
-    public class LoginForm : Form
+    public string SelectedRole { get; private set; } = "Guest";
+    public string UserEmail => txtEmail.Text;
+
+    private RadioButton rbAdmin;
+    private RadioButton rbClient;
+    private RadioButton rbGuest;
+
+    private TextBox txtEmail;
+    private TextBox txtPassword;
+
+    private Label lblEmail;
+    private Label lblPassword;
+    private Label lblGuestInfo;
+
+    private Button btnRegister;
+
+    public LoginForm()
     {
-        private Label lblEmail;
-        private Label lblPassword;
+        Text = "Вхід";
+        ClientSize = new Size(500, 320);
+        StartPosition = FormStartPosition.CenterScreen;
+        FormBorderStyle = FormBorderStyle.FixedSingle;
+        MaximizeBox = false;
 
-        private TextBox txtEmail;
-        private TextBox txtPassword;
-
-        private Button btnLogin;
-        private Button btnRegister;
-
-        public LoginForm()
+        rbAdmin = new RadioButton()
         {
-            Text = "Авторизація";
-            Width = 400;
-            Height = 320;
-            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Адміністратор",
+            Location = new Point(20, 20),
+            AutoSize = true
+        };
 
-            lblEmail = new Label();
-            lblEmail.Text = "Email:";
-            lblEmail.Left = 30;
-            lblEmail.Top = 35;
-            lblEmail.Width = 80;
+        rbClient = new RadioButton()
+        {
+            Text = "Клієнт",
+            Location = new Point(20, 50),
+            AutoSize = true
+        };
 
-            txtEmail = new TextBox();
-            txtEmail.Left = 120;
-            txtEmail.Top = 30;
-            txtEmail.Width = 200;
+        rbGuest = new RadioButton()
+        {
+            Text = "Гість",
+            Location = new Point(20, 80),
+            AutoSize = true,
+            Checked = true
+        };
 
-            lblPassword = new Label();
-            lblPassword.Text = "Пароль:";
-            lblPassword.Left = 30;
-            lblPassword.Top = 85;
-            lblPassword.Width = 80;
+        rbGuest.CheckedChanged += RoleChanged;
+        rbClient.CheckedChanged += RoleChanged;
+        rbAdmin.CheckedChanged += RoleChanged;
 
-            txtPassword = new TextBox();
-            txtPassword.Left = 120;
-            txtPassword.Top = 80;
-            txtPassword.Width = 200;
-            txtPassword.PasswordChar = '*';
+        lblGuestInfo = new Label()
+        {
+            Text = "Вхід можливий без реєстрації",
+            Location = new Point(20, 120),
+            AutoSize = true
+        };
 
-            btnLogin = new Button();
-            btnLogin.Text = "Увійти";
-            btnLogin.SetBounds(60, 180, 140, 35);
-            btnLogin.Click += BtnLogin_Click;
+        lblEmail = new Label()
+        {
+            Text = "Email:",
+            Location = new Point(20, 100),
+            AutoSize = true
+        };
 
-            btnRegister = new Button();
-            btnRegister.Text = "Зареєструватися";
-            btnRegister.SetBounds(220, 180, 140, 35);
-            btnRegister.Click += BtnRegister_Click;
+        txtEmail = new TextBox()
+        {
+            Location = new Point(20, 120),
+            Width = 250
+        };
 
-            Controls.Add(lblEmail);
-            Controls.Add(txtEmail);
+        lblPassword = new Label()
+        {
+            Text = "Пароль:",
+            Location = new Point(20, 150),
+            AutoSize = true
+        };
 
-            Controls.Add(lblPassword);
-            Controls.Add(txtPassword);
+        txtPassword = new TextBox()
+        {
+            Location = new Point(20, 170),
+            Width = 250,
+            PasswordChar = '*'
+        };
 
-            Controls.Add(btnLogin);
-            Controls.Add(btnRegister);
+        Button btnOk = new Button()
+        {
+            Text = "Увійти",
+            Location = new Point(20, 240),
+            Size = new Size(150, 35)
+        };
+
+        btnOk.Click += BtnOk_Click;
+
+        btnRegister = new Button()
+        {
+            Text = "Реєстрація",
+            Location = new Point(200, 240),
+            Size = new Size(150, 35)
+        };
+
+        btnRegister.Click += BtnRegister_Click;
+
+        Controls.AddRange(
+        [
+            rbAdmin,
+            rbClient,
+            rbGuest,
+
+            lblGuestInfo,
+
+            lblEmail,
+            txtEmail,
+
+            lblPassword,
+            txtPassword,
+
+            btnRegister,
+            btnOk
+        ]);
+
+        RoleChanged(null, EventArgs.Empty);
+    }
+
+    private void BtnOk_Click(object? sender, EventArgs e)
+    {
+        if (rbGuest.Checked)
+        {
+            SelectedRole = "Guest";
+            DialogResult = DialogResult.OK;
+            return;
         }
 
-        private void BtnLogin_Click(object? sender, EventArgs e)
+        if (!Regex.IsMatch(txtEmail.Text,@"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
         {
-            if (string.IsNullOrWhiteSpace(txtEmail.Text) ||
-                 string.IsNullOrWhiteSpace(txtPassword.Text))
+            MessageBox.Show("Невірний Email","Помилка",MessageBoxButtons.OK,MessageBoxIcon.Error);
+
+            return;
+        }
+
+        if (rbAdmin.Checked)
+        {
+            if (txtEmail.Text == "admin@gmail.com" &&
+                txtPassword.Text == "Admin123")
             {
-                MessageBox.Show("Будь ласка, введіть email та пароль", "Попередження",MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                SelectedRole = "Admin";
+                DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                MessageBox.Show("Невірний логін або пароль","Помилка",MessageBoxButtons.OK,MessageBoxIcon.Error);
             }
 
-            User user = TicketingSystem.Login(txtEmail.Text, txtPassword.Text);
-
-            if (user is null)  
-            {
-                MessageBox.Show("Невірний email або пароль", "Помилка",MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
-
-            Hide();
-
-            MainForm form = new MainForm();
-            form.ShowDialog();
-
-            Close();
+            return;
         }
 
-        private void BtnRegister_Click(object? sender, EventArgs e)
+        if (rbClient.Checked)
         {
-            RegisterForm registerForm = new RegisterForm();
-            registerForm.ShowDialog();
+            User? user = TicketingSystem.Login(
+                txtEmail.Text,
+                txtPassword.Text);
+
+            if (user != null)
+            {
+                SelectedRole = user.Role;
+                DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                MessageBox.Show(
+                    "Невірний логін або пароль",
+                    "Помилка",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
         }
+    }
+
+    private void BtnRegister_Click(object? sender, EventArgs e)
+    {
+        using var form = new RegisterForm();
+        form.ShowDialog(this);
+    }
+
+    private void RoleChanged(object? sender, EventArgs e)
+    {
+        bool needLogin =
+            rbClient.Checked ||
+            rbAdmin.Checked;
+
+        lblEmail.Visible = needLogin;
+        txtEmail.Visible = needLogin;
+
+        lblPassword.Visible = needLogin;
+        txtPassword.Visible = needLogin;
+
+        lblGuestInfo.Visible = rbGuest.Checked;
+
+        btnRegister.Visible = rbGuest.Checked;
     }
 }
