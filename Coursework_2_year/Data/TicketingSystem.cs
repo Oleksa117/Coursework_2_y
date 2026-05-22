@@ -3,8 +3,30 @@ using Coursework_2_year.Models;
 
 namespace Coursework_2_year.Data
 {
-    public static class TicketingSystem
+    public class TicketingSystem
     {
+            private static TicketingSystem? _instance;
+
+            public static TicketingSystem Instance
+            {
+                get
+                {
+                    if (_instance == null)
+                        _instance = new TicketingSystem();
+
+                    return _instance;
+                }
+            }
+
+            private TicketingSystem()
+            {
+            }
+
+            public User? GetUserByEmail(string email)
+            {
+                return null;
+            }
+       
         private const string ConnectionString = "Data Source=tickets.db";
 
         // Реєстрація нового користувача
@@ -93,6 +115,11 @@ namespace Coursework_2_year.Data
             }
 
             return users;
+        }
+
+        internal TicketOrder PurchaseTicket(Concert concert,string ticketType,Customer customer)
+        {
+            return new TicketOrder();
         }
     }
 }

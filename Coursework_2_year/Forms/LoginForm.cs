@@ -174,11 +174,7 @@ public class LoginForm : Form
             }
             else
             {
-                MessageBox.Show(
-                    "Невірний логін або пароль",
-                    "Помилка",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
+                MessageBox.Show("Невірний логін або пароль","Помилка",MessageBoxButtons.OK,MessageBoxIcon.Error);
             }
         }
     }
@@ -191,9 +187,7 @@ public class LoginForm : Form
 
     private void RoleChanged(object? sender, EventArgs e)
     {
-        bool needLogin =
-            rbClient.Checked ||
-            rbAdmin.Checked;
+        bool needLogin =rbClient.Checked || rbAdmin.Checked;
 
         lblEmail.Visible = needLogin;
         txtEmail.Visible = needLogin;
