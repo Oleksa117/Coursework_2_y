@@ -15,5 +15,17 @@ namespace Coursework_2_year.Models
         public string Venue { get; set; } = "";
 
         public DateTime Date { get; set; }
+
+        public Ticket? FindAvailableTicket(string type) =>
+        Seats.FirstOrDefault(t => t.GetTypeName() == type && t.IsAvailable);
+
+        public bool CheckAvailability(string type) =>
+            Seats.Any(t => t.GetTypeName() == type && t.IsAvailable);
+
+        public int GetAvailableCount(string type) =>
+            Seats.Count(t => t.GetTypeName() == type && t.IsAvailable);
+
+        public int GetTotalCount(string type) =>
+            Seats.Count(t => t.GetTypeName() == type);
     }
 }

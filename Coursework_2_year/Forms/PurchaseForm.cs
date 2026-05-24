@@ -259,7 +259,6 @@ namespace Coursework_2_year.Forms
                 };
             }
 
-
             var order = TicketingSystem.Instance.PurchaseTicket(_concert, type, customer);
             if (order == null)
             {
