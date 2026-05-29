@@ -12,6 +12,8 @@ namespace Coursework_2_year.Models
         public string SeatLabel { get; set; } = string.Empty;
         public bool IsAvailable { get; set; } = true;
 
+        public Customer? Owner { get; set; }
+
         public abstract decimal GetPrice();
         public abstract string GetTypeName();
         public abstract string GetInfo();

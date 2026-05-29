@@ -104,29 +104,32 @@ namespace Coursework_2_year.Forms
 
         private void BtnRegister_Click(object? sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtFirstName.Text) ||
-                string.IsNullOrWhiteSpace(txtLastName.Text) ||
-                string.IsNullOrWhiteSpace(txtEmail.Text) ||
-                string.IsNullOrWhiteSpace(txtPassword.Text))
+            if (txtLastName.Text == "" ||
+                txtFirstName.Text == "" ||
+                txtEmail.Text == "" ||
+                txtPassword.Text == "")
             {
-                MessageBox.Show("Заповніть усі поля","Попередження",MessageBoxButtons.OK,MessageBoxIcon.Warning);
-
+                MessageBox.Show("Заповніть всі поля.");
                 return;
             }
 
-            User user = new()
+            if (!Regex.IsMatch(
+                txtEmail.Text,
+                @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
             {
-                FirstName = txtFirstName.Text,
-                LastName = txtLastName.Text,
-                Email = txtEmail.Text,
-                Password = txtPassword.Text,
-                Role = "Customer"
-            };
+                MessageBox.Show("Невірний Email.");
+                return;
+            }
 
-            TicketingSystem.Register(user);
+            TicketingSystem.Instance.RegisterUser(
+                txtFirstName.Text,
+                txtLastName.Text,
+                txtEmail.Text,
+                txtPassword.Text);
 
-            MessageBox.Show("Реєстрацію успішно завершено!","Інформація",MessageBoxButtons.OK,MessageBoxIcon.Information);
+            MessageBox.Show("Реєстрація успішна!");
 
+            DialogResult = DialogResult.OK;
             Close();
         }
     }

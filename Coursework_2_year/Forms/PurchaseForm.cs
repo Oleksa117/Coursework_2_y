@@ -168,8 +168,8 @@ namespace Coursework_2_year.Forms
 
                 if (user != null)
                 {
-                    txtName.Text = user.FirstName;
-                    txtSurname.Text = user.LastName;
+                    txtName.Text = user.Value.FirstName;
+                    txtSurname.Text = user.Value.LastName;
 
                     txtName.ReadOnly = true;
                     txtSurname.ReadOnly = true;
@@ -195,16 +195,20 @@ namespace Coursework_2_year.Forms
                 return;
             }
 
-            lblTicketType.Text =$"Тип квитка: {_selectedTicket.GetTypeName()}";
+            lblTicketType.Text = $"Тип квитка: {_selectedTicket.GetTypeName()}";
 
             decimal price = _selectedTicket.GetPrice();
 
-            if (!string.IsNullOrWhiteSpace(_userEmail))
+            bool isRegistered = !string.IsNullOrWhiteSpace(_userEmail);
+
+            if (isRegistered)
             {
                 price *= 0.9m;
             }
 
-            lblPrice.Text = $"{price:F0} грн (знижка -10%)";
+            string note = isRegistered ? " (-10% знижка)" : "";
+
+            lblPrice.Text = $"{price:F0} грн{note}";
         }
 
         private void CmbCustomer_Changed(object? sender, EventArgs e)
@@ -215,19 +219,21 @@ namespace Coursework_2_year.Forms
 
         private void UpdatePrice()
         {
-            string type = "VIP";
-            decimal basePrice = type switch
-            {
-                "VIP" => 2000m,
-                "Standard" => 800m,
-                _ => 300m,
-            };
+            if (_selectedTicket == null)
+                return;
 
-            bool isRegistered = cmbCustomer.SelectedItem is RegisteredCustomer;
-            decimal final = isRegistered ? basePrice * 0.9m : basePrice;
+            decimal price = _selectedTicket.GetPrice();
+
+            bool isRegistered = !string.IsNullOrWhiteSpace(_userEmail);
+
+            if (isRegistered)
+            {
+                price *= 0.9m;
+            }
+
             string note = isRegistered ? " (-10% знижка)" : "";
 
-            lblPrice.Text = $"{final} грн{note}";
+            lblPrice.Text = $"{price:F0} грн{note}";
         }
 
         private void BtnConfirm_Click(object? sender, EventArgs e)

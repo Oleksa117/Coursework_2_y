@@ -13,7 +13,7 @@ namespace Coursework_2_year
             DatabaseHelper.CreateTables();
 
             ApplicationConfiguration.Initialize();
-            Application.Run(new LoginForm());
+            Application.Run(new MainForm());
         }
     }
 }

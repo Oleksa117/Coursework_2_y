@@ -163,13 +163,11 @@ public class LoginForm : Form
 
         if (rbClient.Checked)
         {
-            User? user = TicketingSystem.Login(
-                txtEmail.Text,
-                txtPassword.Text);
+            var role = TicketingSystem.Instance.Login(txtEmail.Text,txtPassword.Text);
 
-            if (user != null)
+            if (role != null)
             {
-                SelectedRole = user.Role;
+                SelectedRole = role;
                 DialogResult = DialogResult.OK;
             }
             else
