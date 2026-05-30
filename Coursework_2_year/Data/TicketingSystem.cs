@@ -255,16 +255,16 @@ namespace Coursework_2_year.Data
 
         public List<Concert> GetAllConcerts() => _concerts;
 
-        public Concert? GetConcertById(int id) => _concerts.FirstOrDefault(c => c.Id == id);
-
-        public List<Customer> GetAllCustomers() => _customers;
-
         public List<TicketOrder> GetAllOrders() => _orders;
 
         public TicketOrder? PurchaseTicket(Concert concert, string ticketType, Customer customer)
         {
+            if (!concert.CheckAvailability(ticketType))
+                return null;
+
             var ticket = concert.FindAvailableTicket(ticketType);
-            if (ticket == null) return null;
+            if (ticket == null)
+                return null;
 
             decimal price = ticket.GetPrice();
 
@@ -414,12 +414,7 @@ namespace Coursework_2_year.Data
             cmd.ExecuteNonQuery();
         }
 
-        private static long InsertCustomer(
-        SqliteConnection conn,
-        string name,
-        string contact,
-        string type,
-        string? email)
+        private static long InsertCustomer(SqliteConnection conn,string name,string contact,string type,string? email)
         {
             using var cmd = conn.CreateCommand();
             cmd.CommandText = @"
@@ -436,8 +431,7 @@ namespace Coursework_2_year.Data
             return (long)cmd.ExecuteScalar()!;
         }
 
-        private static long InsertOrder(SqliteConnection conn, long ticketId, long customerId,
-                                         decimal price, DateTime time)
+        private static long InsertOrder(SqliteConnection conn, long ticketId, long customerId,decimal price, DateTime time)
         {
             using var cmd = conn.CreateCommand();
             cmd.CommandText = """
@@ -484,14 +478,21 @@ namespace Coursework_2_year.Data
 
             using (var check = conn.CreateCommand())
             {
-                check.CommandText =
-                    "SELECT COUNT(*) FROM Users WHERE Email=@em;";
+                check.CommandText ="SELECT COUNT(*) FROM Users WHERE Email=@em;";
 
                 check.Parameters.AddWithValue("@em", email);
 
                 if ((long)check.ExecuteScalar()! > 0)
                     throw new Exception("Користувач з такою поштою вже існує.");
             }
+
+            var customer = new RegisteredCustomer
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                Password = password
+            };
 
             using var cmd = conn.CreateCommand();
 
@@ -502,10 +503,10 @@ namespace Coursework_2_year.Data
             (@fn, @ln, @em, @pw, 'Client');
             ";
 
-            cmd.Parameters.AddWithValue("@fn", firstName);
-            cmd.Parameters.AddWithValue("@ln", lastName);
-            cmd.Parameters.AddWithValue("@em", email);
-            cmd.Parameters.AddWithValue("@pw", password);
+            cmd.Parameters.AddWithValue("@fn", customer.FirstName);
+            cmd.Parameters.AddWithValue("@ln", customer.LastName);
+            cmd.Parameters.AddWithValue("@em", customer.Email);
+            cmd.Parameters.AddWithValue("@pw", customer.Password);
 
             cmd.ExecuteNonQuery();
         }

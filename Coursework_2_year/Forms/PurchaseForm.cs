@@ -260,23 +260,30 @@ namespace Coursework_2_year.Forms
 
                 customer = new GuestCustomer
                 {
+                    FirstName = name,
+                    LastName = surname,
                     Name = $"{name} {surname}",
                     ContactInfo = ""
                 };
             }
 
             var order = TicketingSystem.Instance.PurchaseTicket(_concert, type, customer);
+
             if (order == null)
             {
-                MessageBox.Show(
-                    $"На жаль, квитки типу «{type}» на цей концерт закінчились.",
-                    "Немає квитків",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                MessageBox.Show($"На жаль, квитки типу «{type}» на цей концерт закінчились.", "Немає квитків",MessageBoxButtons.OK,MessageBoxIcon.Warning);
                 return;
             }
 
-            MessageBox.Show(order.GetReceiptText(), "Успішна покупка", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            if (MessageBox.Show("Повернути квиток?", "Підтвердження",
+                MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                TicketingSystem.Instance.CancelOrder(order.Id);
+            }
+
+            MessageBox.Show(order.GetReceiptText() +$"\nПокупець: {customer}","Успішна покупка",MessageBoxButtons.OK,MessageBoxIcon.Information);
+
+            Close();
             Close();
         }
     }

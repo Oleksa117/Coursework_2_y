@@ -25,6 +25,6 @@ namespace Coursework_2_year.Models
 
         public abstract string GetInfo();
 
-        public override string ToString() => Name;
+        public override string ToString() => $"{LastName} {FirstName}";
     }
 }
