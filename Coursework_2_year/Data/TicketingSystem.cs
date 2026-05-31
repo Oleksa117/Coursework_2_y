@@ -14,7 +14,6 @@ namespace Coursework_2_year.Data
         private readonly List<Concert> _concerts = new();
         private readonly List<Customer> _customers = new();
         private readonly List<TicketOrder> _orders = new();
-        bool isRegisteredUser = true;
         private TicketingSystem()
         {
             InitializeDatabase();
@@ -24,29 +23,48 @@ namespace Coursework_2_year.Data
 
         public void InitializeDatabase() => DatabaseHelper.CreateTables();
 
+        private static void InsertUser(SqliteConnection conn,string firstName,string lastName,string email,string password,string role = "Client")
+        {
+            using var cmd = conn.CreateCommand();
+            //вставка користувача в таблицю Users
+            cmd.CommandText = @"
+            INSERT INTO Users (FirstName, LastName, Email, Password, Role)
+            VALUES (@fn, @ln, @em, @pw, @role);";
+
+            // Додавання параметрів
+            cmd.Parameters.AddWithValue("@fn", firstName);
+            cmd.Parameters.AddWithValue("@ln", lastName);
+            cmd.Parameters.AddWithValue("@em", email);
+            cmd.Parameters.AddWithValue("@pw", password);
+            cmd.Parameters.AddWithValue("@role", role);
+
+            cmd.ExecuteNonQuery();// Виконання команди (повертає 1 якщо успішно)
+        }
+
+        //заповнення бази даних початковими даними, якщо вона порожня
         public void SeedIfEmpty()
         {
             using var conn = DatabaseHelper.GetConnection();
             using var check = conn.CreateCommand();
-            check.CommandText = "SELECT COUNT(*) FROM Concerts;";
+            check.CommandText = "SELECT COUNT(*) FROM Concerts;";// Перевірка наявності концертів у базі даних
             if ((long)(check.ExecuteScalar() ?? 0L) > 0) return;
 
             var concerts = new[]
             {
-            ("Rock Fest 2025",    "Київ",     "2026-06-15"),
+            ("Rock Fest 2025",    "Київ",     "2026-06-29"),
             ("Jazz Evening",      "Львів",    "2026-07-20"),
             ("Electronic Night",  "Харків",   "2026-08-10"),
             ("Pop Stars Gala",    "Одеса",    "2026-09-05"),
             ("Metal Madness",     "Дніпро",   "2026-10-18"),
             ("Classical Night",   "Київ",     "2026-11-22"),
             ("Folk Festival",     "Полтава",  "2026-12-07"),
-            ("New Year Concert",  "Київ",     "2027-01-01"),
-        };
+            ("New Year Concert",  "Київ",     "2027-01-01")};
 
             var concertIds = new List<long>();
             foreach (var (title, venue, date) in concerts)
                 concertIds.Add(InsertConcert(conn, title, venue, date));
 
+            //генерація квитків для кожного концерту: 5 VIP, 10 Standard, 20 Standing
             foreach (var cid in concertIds)
             {
                 for (int i = 1; i <= 5; i++) InsertTicket(conn, cid, "VIP", $"A{i:D2}");
@@ -54,50 +72,73 @@ namespace Coursework_2_year.Data
                 for (int i = 1; i <= 20; i++) InsertTicket(conn, cid, "Standing", "Standing");
             }
 
-            // ── 20 зареєстрованих клієнтів ───────────────────────────────────────
-            long olena = InsertCustomer(conn, "Олена Коваль", "+380501111001", "Registered", "olena@mail.com");
-            long ivan = InsertCustomer(conn, "Іван Мельник", "+380671111002", "Registered", "ivan@mail.com");
-            long maria = InsertCustomer(conn, "Марія Шевченко", "+380931111003", "Registered", "maria@mail.com");
-            long oleksiy = InsertCustomer(conn, "Олексій Бондаренко", "+380681111004", "Registered", "oleksiy@mail.com");
-            long dmytro = InsertCustomer(conn, "Дмитро Лисенко", "+380991111005", "Registered", "dmytro@mail.com");
-            long tetyana = InsertCustomer(conn, "Тетяна Павленко", "+380631111006", "Registered", "tetyana@mail.com");
-            long andriy = InsertCustomer(conn, "Андрій Гриценко", "+380731111007", "Registered", "andriy@mail.com");
-            long natalia = InsertCustomer(conn, "Наталія Романенко", "+380661111008", "Registered", "natalia@mail.com");
-            long serhiy = InsertCustomer(conn, "Сергій Зінченко", "+380501111009", "Registered", "serhiy@mail.com");
-            long yuliia = InsertCustomer(conn, "Юлія Власенко", "+380671111010", "Registered", "yuliia@mail.com");
-            long maksym = InsertCustomer(conn, "Максим Петренко", "+380931111011", "Registered", "maksym@mail.com");
-            long viktoria = InsertCustomer(conn, "Вікторія Ткаченко", "+380681111012", "Registered", "viktoria@mail.com");
-            long bohdan = InsertCustomer(conn, "Богдан Олійник", "+380991111013", "Registered", "bohdan@mail.com");
-            long iryna = InsertCustomer(conn, "Ірина Семенченко", "+380631111014", "Registered", "iryna@mail.com");
-            long vasyl = InsertCustomer(conn, "Василь Ковальчук", "+380731111015", "Registered", "vasyl@mail.com");
-            long oksana = InsertCustomer(conn, "Оксана Мартиненко", "+380661111016", "Registered", "oksana@mail.com");
-            long ruslan = InsertCustomer(conn, "Руслан Яковенко", "+380501111017", "Registered", "ruslan@mail.com");
-            long alina = InsertCustomer(conn, "Аліна Сидоренко", "+380671111018", "Registered", "alina@mail.com");
-            long yevhen = InsertCustomer(conn, "Євген Нечипоренко", "+380931111019", "Registered", "yevhen@mail.com");
-            long kateryna = InsertCustomer(conn, "Катерина Борисенко", "+380681111020", "Registered", "kateryna@mail.com");
+
+            // 20 зареєстрованих клієнтів 
+            long olena = InsertCustomer(conn, "Олена Коваль", "Olena123", "Registered", "olena@gmail.com");
+            long ivan = InsertCustomer(conn, "Іван Мельник", "Ivan123", "Registered", "ivan@gmail.com");
+            long maria = InsertCustomer(conn, "Марія Шевченко", "Maria123", "Registered", "maria@gmail.com");
+            long oleksiy = InsertCustomer(conn, "Олексій Бондаренко", "Oleksiy123", "Registered", "oleksiy@gmail.com");
+            long dmytro = InsertCustomer(conn, "Дмитро Лисенко", "Dmytro123", "Registered", "dmytro@gmail.com");
+            long tetyana = InsertCustomer(conn, "Тетяна Павленко", "Tetyana123", "Registered", "tetyana@gmail.com");
+            long andriy = InsertCustomer(conn, "Андрій Гриценко", "Andriy123", "Registered", "andriy@gmail.com");
+            long natalia = InsertCustomer(conn, "Наталія Романенко", "Natalia123", "Registered", "natalia@gmail.com");
+            long serhiy = InsertCustomer(conn, "Сергій Зінченко", "Serhiy123", "Registered", "serhiy@gmail.com");
+            long yuliia = InsertCustomer(conn, "Юлія Власенко", "Yuliia123", "Registered", "yuliia@gmail.com");
+            long maksym = InsertCustomer(conn, "Максим Петренко", "Maksym123", "Registered", "maksym@gmail.com");
+            long viktoria = InsertCustomer(conn, "Вікторія Ткаченко", "Viktoria123", "Registered", "viktoria@gmail.com");
+            long bohdan = InsertCustomer(conn, "Богдан Олійник", "Bohdan123", "Registered", "bohdan@gmail.com");
+            long iryna = InsertCustomer(conn, "Ірина Семенченко", "Iryna123", "Registered", "iryna@gmail.com");
+            long vasyl = InsertCustomer(conn, "Василь Ковальчук", "Vasyl123", "Registered", "vasyl@gmail.com");
+            long oksana = InsertCustomer(conn, "Оксана Мартиненко", "Oksana123", "Registered", "oksana@gmail.com");
+            long ruslan = InsertCustomer(conn, "Руслан Яковенко", "Ruslan123", "Registered", "ruslan@gmail.com");
+            long alina = InsertCustomer(conn, "Аліна Сидоренко", "Alina123", "Registered", "alina@gmail.com");
+            long yevhen = InsertCustomer(conn, "Євген Нечипоренко", "Yevhen123", "Registered", "yevhen@gmail.com");
+            long kateryna = InsertCustomer(conn, "Катерина Борисенко", "Kateryna123", "Registered", "kateryna@gmail.com");
+
+            //дублювання для таблиці Usуrs
+            InsertUser(conn, "Олена", "Коваль", "olena@gmail.com", "Olena123");
+            InsertUser(conn, "Іван", "Мельник", "ivan@gmail.com", "Ivan123");
+            InsertUser(conn, "Марія", "Шевченко", "maria@gmail.com", "Maria123");
+            InsertUser(conn, "Олексій", "Бондаренко", "oleksiy@gmail.com", "Oleksiy123");
+            InsertUser(conn, "Дмитро", "Лисенко", "dmytro@gmail.com", "Dmytro123");
+            InsertUser(conn, "Тетяна", "Павленко", "tetyana@gmail.com", "Tetyana123");
+            InsertUser(conn, "Андрій", "Гриценко", "andriy@gmail.com", "Andriy123");
+            InsertUser(conn, "Наталія", "Романенко", "natalia@gmail.com", "Natalia123");
+            InsertUser(conn, "Сергій", "Зінченко", "serhiy@gmail.com", "Serhiy123");
+            InsertUser(conn, "Юлія", "Власенко", "yuliia@gmail.com", "Yuliia123");
+            InsertUser(conn, "Максим", "Петренко", "maksym@gmail.com", "Maksym123");
+            InsertUser(conn, "Вікторія", "Ткаченко", "viktoria@gmail.com", "Viktoria123");
+            InsertUser(conn, "Богдан", "Олійник", "bohdan@gmail.com", "Bohdan123");
+            InsertUser(conn, "Ірина", "Семенченко", "iryna@gmail.com", "Iryna123");
+            InsertUser(conn, "Василь", "Ковальчук", "vasyl@gmail.com", "Vasyl123");
+            InsertUser(conn, "Оксана", "Мартиненко", "oksana@gmail.com", "Oksana123");
+            InsertUser(conn, "Руслан", "Яковенко", "ruslan@gmail.com", "Ruslan123");
+            InsertUser(conn, "Аліна", "Сидоренко", "alina@gmail.com", "Alina123");
+            InsertUser(conn, "Євген", "Нечипоренко", "yevhen@gmail.com", "Yevhen123");
+            InsertUser(conn, "Катерина", "Борисенко", "kateryna@gmail.com", "Kateryna123");
 
             // ── 20 гостей ─────────────────────────────────────────────────────────
-            long anonGuest = InsertCustomer(conn, "Гість", "—", "Guest", null);
-            long petro = InsertCustomer(conn, "Петро Савченко", "+380731111021", "Guest", null);
-            long nadiia = InsertCustomer(conn, "Надія Кравченко", "+380661111022", "Guest", null);
-            long mykola = InsertCustomer(conn, "Микола Кузьменко", "+380501111023", "Guest", null);
-            long hanna = InsertCustomer(conn, "Ганна Хоменко", "+380671111024", "Guest", null);
-            long leonid = InsertCustomer(conn, "Леонід Супруненко", "+380931111025", "Guest", null);
-            long tamara = InsertCustomer(conn, "Тамара Білоус", "+380681111026", "Guest", null);
-            long oleh = InsertCustomer(conn, "Олег Луценко", "+380991111027", "Guest", null);
-            long svitlana = InsertCustomer(conn, "Світлана Панченко", "+380631111028", "Guest", null);
-            long fedir = InsertCustomer(conn, "Федір Кириленко", "+380731111029", "Guest", null);
-            long liudmyla = InsertCustomer(conn, "Людмила Степаненко", "+380661111030", "Guest", null);
-            long anton = InsertCustomer(conn, "Антон Захаренко", "+380501111031", "Guest", null);
-            long daria = InsertCustomer(conn, "Дар'я Мусієнко", "+380671111032", "Guest", null);
-            long vladyslav = InsertCustomer(conn, "Владислав Гнатенко", "+380931111033", "Guest", null);
-            long zoia = InsertCustomer(conn, "Зоя Заєць", "+380681111034", "Guest", null);
-            long pylyp = InsertCustomer(conn, "Пилип Бабич", "+380991111035", "Guest", null);
-            long uliana = InsertCustomer(conn, "Уляна Литвиненко", "+380631111036", "Guest", null);
-            long herman = InsertCustomer(conn, "Герман Вернигора", "+380731111037", "Guest", null);
-            long khrystyna = InsertCustomer(conn, "Христина Даниленко", "+380661111038", "Guest", null);
-            long larysa = InsertCustomer(conn, "Лариса Полтавець", "+380501111039", "Guest", null);
 
+            long petro = InsertCustomer(conn, "Петро Савченко", "", "Guest", null);
+            long nadiia = InsertCustomer(conn, "Надія Кравченко", "", "Guest", null);
+            long mykola = InsertCustomer(conn, "Микола Кузьменко", "", "Guest", null);
+            long hanna = InsertCustomer(conn, "Ганна Хоменко", "", "Guest", null);
+            long leonid = InsertCustomer(conn, "Леонід Супруненко", "", "Guest", null);
+            long tamara = InsertCustomer(conn, "Тамара Білоус", "", "Guest", null);
+            long oleh = InsertCustomer(conn, "Олег Луценко", "", "Guest", null);
+            long svitlana = InsertCustomer(conn, "Світлана Панченко", "", "Guest", null);
+            long fedir = InsertCustomer(conn, "Федір Кириленко", "", "Guest", null);
+            long liudmyla = InsertCustomer(conn, "Людмила Степаненко", "", "Guest", null);
+            long anton = InsertCustomer(conn, "Антон Захаренко", "", "Guest", null);
+            long daria = InsertCustomer(conn, "Дар'я Мусієнко", "", "Guest", null);
+            long vladyslav = InsertCustomer(conn, "Владислав Гнатенко", "", "Guest", null);
+            long zoia = InsertCustomer(conn, "Зоя Заєць", "", "Guest", null);
+            long pylyp = InsertCustomer(conn, "Пилип Бабич", "", "Guest", null);
+            long uliana = InsertCustomer(conn, "Уляна Литвиненко", "", "Guest", null);
+            long herman = InsertCustomer(conn, "Герман Вернигора", "", "Guest", null);
+            long khrystyna = InsertCustomer(conn, "Христина Даниленко", "", "Guest", null);
+            long larysa = InsertCustomer(conn, "Лариса Полтавець", "", "Guest", null);
+            //створення замовлення
             void Buy(long concertId, string type, string label, long customerId, decimal price, int daysAgo)
             {
                 long tid = GetTicketId(conn, concertId, type, label);
@@ -159,7 +200,6 @@ namespace Coursework_2_year.Data
             Buy(concertIds[7], "Standard", "B01", herman, 800m, 4);
             Buy(concertIds[7], "Standard", "B02", khrystyna, 800m, 3);
             Buy(concertIds[7], "Standing", "Standing", larysa, 300m, 2);
-            Buy(concertIds[7], "Standing", "Standing", anonGuest, 300m, 1);
         }
 
         public void LoadAll()

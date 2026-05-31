@@ -85,9 +85,8 @@ namespace Coursework_2_year.Forms
             btnRegister = new()
             {
                 Text = "Зареєструватися",
-                Left = 130,
-                Top = 200,
-                Width = 120
+                Location = new Point(120, 240),
+                Size = new Size(150, 35)
             };
 
             btnRegister.Click += BtnRegister_Click;

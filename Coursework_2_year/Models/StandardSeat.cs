@@ -10,7 +10,6 @@ namespace Coursework_2_year.Models
 
         public override string GetTypeName() => "Standard";
 
-        public override string GetInfo() =>
-            $"Стандарт | {SeatLabel} | {(IsAvailable ? "Доступний" : "Продано")} | 800 грн";
+        public override string GetInfo() =>$"Стандарт | {SeatLabel} | {(IsAvailable ? "Доступний" : "Продано")} | 800 грн";
     }
 }

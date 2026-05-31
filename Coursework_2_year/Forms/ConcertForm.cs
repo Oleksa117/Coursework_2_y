@@ -33,7 +33,7 @@ namespace Coursework_2_year.Forms
             StartPosition = FormStartPosition.CenterParent;
             Font = new Font("Segoe UI", 10f);
             BackColor = SystemColors.Control;
-
+            
             lblTitle = new Label
             {
                 Location = new Point(12, 12),
@@ -78,7 +78,7 @@ namespace Coursework_2_year.Forms
             };
             btnBuy.Click += BtnBuy_Click;
 
-            Controls.AddRange(new Control[] { lblTitle, lblVenue, lblDate, dgvTickets, btnBuy });
+            Controls.AddRange(new Control[] { lblTitle, lblVenue, lblDate, dgvTickets, btnBuy });// Додано кнопку до форми
         }
 
         private void LoadData()
@@ -88,7 +88,7 @@ namespace Coursework_2_year.Forms
             lblDate.Text = $"Дата: {_concert.Date:dd.MM.yyyy}";
 
             dgvTickets.Rows.Clear();
-            foreach (var t in _concert.Seats)
+            foreach (var t in _concert.Seats)// Додано цикл для заповнення DataGridView квитками
             {
                 dgvTickets.Rows.Add(
                     t.GetTypeName(),

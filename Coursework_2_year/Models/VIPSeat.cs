@@ -10,7 +10,6 @@ namespace Coursework_2_year.Models
 
         public override string GetTypeName() => "VIP";
 
-        public override string GetInfo() =>
-            $"VIP | {SeatLabel} | {(IsAvailable ? "Доступний" : "Продано")} | 2000 грн";
+        public override string GetInfo() =>$"VIP | {SeatLabel} | {(IsAvailable ? "Доступний" : "Продано")} | 2000 грн";
     }
 }

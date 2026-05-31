@@ -16,7 +16,6 @@ namespace Coursework_2_year.Models
 
         public override string GetCustomerType() => "Registered";
 
-        public override string GetInfo() =>
-        $"{Name} (Зареєстрований) | {Email}";
+        public override string GetInfo() =>$"{Name} (Зареєстрований) | {Email}";
     }
 }

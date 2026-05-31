@@ -10,7 +10,7 @@ namespace Coursework_2_year.Models
 
         public Ticket Ticket { get; set; } = null!;
 
-        public Customer Customer { get; set; } = null!;
+        public Customer Customer { get; set; } = null!;// Посилання на клієнта, який зробив замовлення
 
         public decimal FinalPrice { get; set; }
 

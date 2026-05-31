@@ -107,7 +107,7 @@ public class LoginForm : Form
         };
 
         btnRegister.Click += BtnRegister_Click;
-
+        // Спочатку додаємо всі елементи, а потім оновлюємо видимість
         Controls.AddRange(
         [
             rbAdmin,
@@ -131,7 +131,7 @@ public class LoginForm : Form
 
     private void BtnOk_Click(object? sender, EventArgs e)
     {
-        if (rbGuest.Checked)
+        if (rbGuest.Checked)// Вхід як гість не вимагає перевірки даних
         {
             SelectedRole = "Guest";
             DialogResult = DialogResult.OK;
@@ -160,11 +160,11 @@ public class LoginForm : Form
 
             return;
         }
-
+        // Вхід як клієнт вимагає перевірки даних через систему
         if (rbClient.Checked)
         {
             var role = TicketingSystem.Instance.Login(txtEmail.Text,txtPassword.Text);
-
+           
             if (role != null)
             {
                 SelectedRole = role;

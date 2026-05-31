@@ -4,19 +4,19 @@ namespace Coursework_2_year.Data
 {
     public static class DatabaseHelper
     {
-        private static readonly string DbPath =
-            Path.Combine(AppContext.BaseDirectory, "tickets.db");
+        private static readonly string DbPath = Path.Combine(AppContext.BaseDirectory, "tickets.db");
 
+        // Метод для отримання відкритого з'єднання з базою даних
         public static SqliteConnection GetConnection()
         {
-            var conn = new SqliteConnection($"Data Source={DbPath}");
+            var conn = new SqliteConnection($"Data Source={DbPath}");// Створюємо з'єднання з базою даних
             conn.Open();
             return conn;
         }
 
         public static void CreateTables()
         {
-            using var conn = GetConnection();
+            using var conn = GetConnection();// Отримуємо з'єднання з базою даних
             using var cmd = conn.CreateCommand();
             cmd.CommandText = """
             CREATE TABLE IF NOT EXISTS Concerts (
@@ -62,7 +62,7 @@ namespace Coursework_2_year.Data
                 FOREIGN KEY (CustomerId) REFERENCES Customers(Id)
             );
             """;
-            cmd.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();// Виконуємо SQL-команди для створення таблиць, якщо вони ще не існують
         }
     }
 }
